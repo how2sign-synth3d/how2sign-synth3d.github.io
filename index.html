@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="How2Sign-Synth3D: A large-scale sign language dataset with synchronized multi-view recordings, SMPL-H body-model parameters, and synthetic data for dense landmark tracking." />
+  <meta name="keywords" content="sign language, ASL, dataset, 3D, SMPL-H, landmark tracking, How2Sign, synthetic data, pose estimation" />
+  <meta name="author" content="Levente Tempfli, Stephan Huber, Oscar Koller, Amanda Duarte" />
+  <title>How2Sign-Synth3D Dataset</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #ffffff;
+      --bg-soft:     #f6f8fa;
+      --bg-card:     #f0f4f8;
+      --bg-card2:    #e8eef5;
+      --border:      #d0d7de;
+      --accent:      #0969da;
+      --accent2:     #7c3aed;
+      --accent-glow: rgba(9,105,218,.10);
+      --text:        #1a2233;
+      --text-muted:  #57606a;
+      --text-dim:    #8c959f;
+      --tag-bg:      rgba(9,105,218,.07);
+      --tag-border:  rgba(9,105,218,.25);
+      --green:       #1a7f37;
+      --green-bg:    rgba(26,127,55,.08);
+      --radius:      10px;
+      --radius-lg:   16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav ──────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+    }
+
+    .nav-logo {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.6rem;
+    }
+
+    nav ul a {
+      color: var(--text-muted);
+      font-size: .9rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+
+    nav ul a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    .hero-wrap {
+      background: linear-gradient(180deg, #eef4fd 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 90px 2rem 70px;
+      text-align: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--tag-bg);
+      border: 1px solid var(--tag-border);
+      padding: .3rem .9rem;
+      border-radius: 99px;
+      margin-bottom: 1.4rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: .6rem;
+      background: linear-gradient(135deg, #0d1b2e 0%, #0969da 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 1.8rem;
+    }
+
+    /* Tag strip */
+    .tag-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      justify-content: center;
+      margin-bottom: 2.4rem;
+    }
+
+    .tag {
+      font-size: .8rem;
+      font-weight: 500;
+      padding: .28rem .82rem;
+      border-radius: 99px;
+      border: 1px solid var(--tag-border);
+      background: var(--tag-bg);
+      color: var(--accent);
+    }
+
+    .tag.purple {
+      color: var(--accent2);
+      background: rgba(163,113,247,.1);
+      border-color: rgba(163,113,247,.35);
+    }
+
+    .tag.green {
+      color: var(--green);
+      background: var(--green-bg);
+      border-color: rgba(63,185,80,.35);
+    }
+
+    /* Hero buttons */
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .65rem 1.4rem;
+      border-radius: var(--radius);
+      font-size: .92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none !important;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary:hover { background: #0860c8; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover { background: var(--bg-card); border-color: var(--accent); }
+
+    /* ── Section shared ───────────────────────────────────── */
+    section { padding: 80px 0; border-top: 1px solid var(--border); }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section-label {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .5rem;
+    }
+
+    .section-title {
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      max-width: 720px;
+      margin-bottom: 2.6rem;
+    }
+
+    /* ── Stats bar ────────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin: 3rem 0;
+    }
+
+    .stat-cell {
+      background: var(--bg-soft);
+      padding: 1.6rem 1.4rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .stat-value span { color: var(--accent); }
+
+    .stat-label {
+      font-size: .78rem;
+      color: var(--text-muted);
+      margin-top: .3rem;
+    }
+
+    /* ── About cards ──────────────────────────────────────── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1rem;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      transition: border-color .2s;
+    }
+
+    .feature-card:hover { border-color: var(--accent); }
+
+    .feature-icon {
+      font-size: 1.6rem;
+      margin-bottom: .8rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: .45rem;
+    }
+
+    .feature-card p {
+      font-size: .88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* About text */
+    .about-text {
+      max-width: 820px;
+      color: var(--text-muted);
+      font-size: .97rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .about-text strong { color: var(--text); }
+
+    /* Pipeline */
+    .pipeline {
+      display: flex;
+      gap: 0;
+      margin: 2.5rem 0;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .pipeline-step {
+      flex: 1;
+      padding: 1.4rem 1.2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .pipeline-step:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      font-size: 1.1rem;
+      z-index: 1;
+    }
+
+    .pipeline-step:not(:first-child) { border-left: 1px solid var(--border); }
+
+    .pipeline-num {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 700;
+      line-height: 26px;
+      margin-bottom: .5rem;
+    }
+
+    .pipeline-step h4 { font-size: .85rem; font-weight: 600; margin-bottom: .25rem; }
+    .pipeline-step p { font-size: .75rem; color: var(--text-muted); }
+
+    /* ── Download ─────────────────────────────────────────── */
+    #download { background: linear-gradient(180deg, var(--bg) 0%, rgba(9,105,218,.03) 100%); }
+
+    .download-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: .8rem;
+      background: rgba(9,105,218,.06);
+      border: 1px solid rgba(9,105,218,.22);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      margin-bottom: 2.5rem;
+      font-size: .88rem;
+      color: var(--text-muted);
+    }
+
+    .download-notice .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }
+
+    .download-group {
+      margin-bottom: 2.6rem;
+    }
+
+    .download-group-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .download-group-title .badge {
+      font-size: .72rem;
+      padding: .18rem .6rem;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+
+    .badge-blue { background: var(--tag-bg); border: 1px solid var(--tag-border); color: var(--accent); }
+    .badge-purple { background: rgba(163,113,247,.1); border: 1px solid rgba(163,113,247,.35); color: var(--accent2); }
+    .badge-green { background: var(--green-bg); border: 1px solid rgba(63,185,80,.35); color: var(--green); }
+
+    .download-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .download-table th {
+      background: var(--bg-soft);
+      padding: .7rem 1.1rem;
+      text-align: left;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .download-table td {
+      padding: .9rem 1.1rem;
+      font-size: .88rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      background: var(--bg);
+    }
+
+    .download-table tr:last-child td { border-bottom: none; }
+
+    .download-table tr:hover td { background: var(--bg-card); }
+
+    .download-table td:first-child { font-weight: 500; color: var(--text); }
+    .download-table td:not(:first-child) { color: var(--text-muted); }
+
+    .dl-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      padding: .28rem .75rem;
+      border-radius: 6px;
+      font-size: .8rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: var(--bg-soft);
+      cursor: not-allowed;
+      opacity: .7;
+    }
+
+    .dl-link.active {
+      color: var(--accent);
+      border-color: var(--tag-border);
+      background: var(--tag-bg);
+      cursor: pointer;
+      opacity: 1;
+    }
+
+    .dl-link.active:hover { background: rgba(9,105,218,.14); text-decoration: none; }
+
+    .placeholder-text { color: var(--text-dim); font-size: .8rem; font-style: italic; }
+
+    /* ── Publication ──────────────────────────────────────── */
+    .pub-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0;
+    }
+
+    .pub-body { padding: 2rem 2rem 2rem; }
+
+    .pub-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: .7rem;
+    }
+
+    .pub-authors {
+      font-size: .9rem;
+      color: var(--text-muted);
+      margin-bottom: .5rem;
+    }
+
+    .pub-authors a { color: var(--text-muted); }
+    .pub-authors a:hover { color: var(--accent); }
+
+    .pub-venue {
+      display: inline-block;
+      font-size: .8rem;
+      font-weight: 600;
+      padding: .25rem .75rem;
+      border-radius: 99px;
+      background: var(--green-bg);
+      border: 1px solid rgba(63,185,80,.35);
+      color: var(--green);
+      margin-bottom: 1.2rem;
+    }
+
+    .pub-links { display: flex; flex-wrap: wrap; gap: .6rem; }
+
+    .pub-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .4rem 1rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: var(--bg-soft);
+      transition: all .2s;
+    }
+
+    .pub-link:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+    .pub-link.placeholder { opacity: .5; cursor: not-allowed; }
+
+    /* BibTeX block */
+    .bibtex-wrap {
+      margin-top: 2.5rem;
+    }
+
+    .bibtex-wrap h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: .8rem;
+    }
+
+    .bibtex-block {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text-muted);
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    .bibtex-block .kw { color: #cf222e; }
+    .bibtex-block .field { color: var(--accent); }
+    .bibtex-block .val { color: #1a7f37; }
+    .bibtex-block .id { color: var(--accent2); }
+
+    .copy-btn {
+      position: absolute;
+      top: .75rem;
+      right: .75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: .3rem .7rem;
+      font-size: .75rem;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all .2s;
+    }
+
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Acknowledgements / Institutions ─────────────────── */
+    .orgs-section { padding: 60px 0; }
+
+    .orgs-grid {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-top: 2rem;
+      opacity: .75;
+    }
+
+    .org-name {
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: .6rem 1.2rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-size: .82rem;
+      color: var(--text-dim);
+    }
+
+    footer a { color: var(--text-dim); }
+    footer a:hover { color: var(--accent); }
+
+    /* ── License ──────────────────────────────────────────── */
+    .license-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.4rem;
+      font-size: .87rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+    }
+
+    .license-box strong { color: var(--text); }
+
+    /* ── Responsive ───────────────────────────────────────── */
+    @media (max-width: 680px) {
+      .pipeline { flex-direction: column; }
+      .pipeline-step:not(:last-child)::after { content: '↓'; right: auto; left: 50%; top: auto; bottom: -14px; transform: translateX(-50%); }
+      .pipeline-step:not(:first-child) { border-left: none; border-top: 1px solid var(--border); }
+      .pub-card { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ──────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">How2Sign-<span>Synth3D</span></div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#download">Download</a></li>
+    <li><a href="#publication">Publication</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ────────────────────────────────────────── -->
+<div class="hero-wrap">
+<header class="hero">
+  <div class="hero-eyebrow">Extension of How2Sign</div>
+  <h1>How2Sign-Synth3D</h1>
+  <p class="hero-subtitle">
+    Markerless holistic sign language performance capture and synthetic data for dense landmark tracking
+  </p>
+
+  <div class="tag-strip">
+    <span class="tag">Synchronized Multi-view</span>
+    <span class="tag">SMPL-H Parameters</span>
+    <span class="tag purple">Synthetic Data</span>
+    <span class="tag purple">Dense Landmark Tracking</span>
+    <span class="tag green">State-of-the-Art 3D Reconstruction</span>
+    <span class="tag green">English Translations</span>
+  </div>
+
+  <div class="hero-buttons">
+    <a href="#download" class="btn btn-primary">
+      ⬇ Download Dataset
+    </a>
+    <a href="#publication" class="btn btn-outline">
+      📄 Read the Paper
+    </a>
+    <a href="https://how2sign.github.io" target="_blank" class="btn btn-outline">
+      🔗 How2Sign
+    </a>
+  </div>
+</header>
+</div>
+
+<!-- ── About ────────────────────────────────────────── -->
+<section id="about">
+  <div class="container">
+    <div class="section-label">About</div>
+    <h2 class="section-title">A High-Fidelity 3D Extension of How2Sign</h2>
+
+    <p class="about-text">
+      We present <strong>How2Sign-Synth3D</strong>, a large-scale sign language dataset developed through a
+      <strong>markerless, holistic performance-capture pipeline</strong>. Designed to address the scarcity of
+      high-fidelity 3D motion data in continuous signing, the dataset provides synchronized multi-view recordings,
+      fitted <strong>SMPL-H body-model parameters</strong>, and video-level transcripts, as well as
+      <strong>synthetic renderings with ground-truth annotations</strong> to support reproducible research.
+    </p>
+
+    <p class="about-text">
+      Building upon <a href="https://how2sign.github.io" target="_blank">How2Sign</a> — one of the most adopted
+      resources for American Sign Language (ASL) research — How2Sign-Synth3D resolves long-standing limitations such
+      as unsynchronized dual-view recordings, multi-signer interference in panoptic data, and the lack of precise 3D
+      annotations. Leveraging an iterative <strong>fit → render → retrain</strong> loop, models trained on
+      How2Sign-Synth3D achieve state-of-the-art accuracy, reducing frontal hand mean landmark error by over
+      <strong>60% relative to the baseline</strong>.
+    </p>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-cell">
+        <div class="stat-value">~<span>70</span>h</div>
+        <div class="stat-label">Green Screen (train+val+test)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value"><span>2,267</span></div>
+        <div class="stat-label">Green Screen Recordings</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value"><span>7+</span></div>
+        <div class="stat-label">Camera Views (Panoptic)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value"><span>100k</span></div>
+        <div class="stat-label">Synthetic Train Frames</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value"><span>50k</span></div>
+        <div class="stat-label">Synthetic Test Frames</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">&gt;<span>60%</span></div>
+        <div class="stat-label">Hand Landmark Error Reduction</div>
+      </div>
+    </div>
+
+    <!-- Feature cards -->
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>Synchronized Green Screen Set</h3>
+        <p>Dual-view (frontal and side) recordings temporally aligned using kinematic signatures — 89.7% of pairs synchronized with an average offset of ~7.7 frames. Includes fitted SMPL-H parameters, calibrated camera intrinsics/extrinsics, and sentence-level English translations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎥</div>
+        <h3>Refined Panoptic Subset</h3>
+        <p>Single-signer sequences from the CMU Panoptic Studio captured from 7+ cameras. Multi-signer interference removed, flickering views filtered, and camera selection optimized for geometric consistency. Includes SMPL-H fits, full camera calibration, and video-level translations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>Synthetic Train Set (100k frames)</h3>
+        <p>High-fidelity renderings generated via Blender's Cycles engine from SMPL-H fits of How2Sign motion. Randomized body shape, clothing, backgrounds, and camera parameters promote generalization. Provides ground-truth 3D landmarks and SOMA pose/shape parameters.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Synthetic Test Benchmark (50k frames)</h3>
+        <p>Out-of-domain evaluation set derived from an independent Chinese Sign Language motion library — ensuring no overlap in motion priors or signer identities. Includes a 360° benchmark and a frontal baseline variant for controlled comparisons.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🦴</div>
+        <h3>Dense 3D Landmark Annotations</h3>
+        <p>Hierarchical landmark trackers covering full body (1,428), upper body (1,118), hands (141 per hand), and face (744) landmarks. Probabilistic landmark modeling with uncertainty estimates enables robust multi-view fitting.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✍️</div>
+        <h3>English Translations</h3>
+        <p>Sentence-level translations for the Green Screen set and video-level translations for the Panoptic subset, aligned with corrected timestamps from the synchronization step.</p>
+      </div>
+    </div>
+
+    <!-- Pipeline -->
+    <h3 style="margin-top: 3rem; margin-bottom: 1rem; font-size: 1.05rem;">Iterative Refinement Pipeline</h3>
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="pipeline-num">1</div>
+        <h4>Landmark Extraction</h4>
+        <p>Dense 2D landmarks from multi-view corpus</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-num">2</div>
+        <h4>Parametric Fitting</h4>
+        <p>Multi-view SMPL-H fitting with temporal consistency</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-num">3</div>
+        <h4>Synthetic Re-rendering</h4>
+        <p>High-fidelity frames from recovered SOMA parameters</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-num">4</div>
+        <h4>Tracker Retraining</h4>
+        <p>Models retrained on synthetic supervision</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-num">5</div>
+        <h4>Evaluation</h4>
+        <p>Benchmarked on out-of-domain How2Sign-Synth3D Test</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Download ─────────────────────────────────────── -->
+<section id="download">
+  <div class="container">
+    <div class="section-label">Download</div>
+    <h2 class="section-title">Dataset Access</h2>
+    <p class="section-desc">
+      How2Sign-Synth3D is publicly available for research purposes only under the
+      <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a> license.
+      Download links will be released upon publication.
+    </p>
+
+    <div class="download-notice">
+      <span class="icon">ℹ️</span>
+      <span>
+        Download links are coming soon. This page will be updated when the dataset is officially released.
+        Please check back or <a href="mailto:amanda.duarte@bsc.es">contact us</a> for early access inquiries.
+      </span>
+    </div>
+
+    <!-- Green Screen Set -->
+    <div class="download-group">
+      <div class="download-group-title">
+        Synchronized Green Screen Set
+        <span class="badge badge-blue">2× 720p · 23.98–60 FPS</span>
+      </div>
+      <table class="download-table">
+        <thead>
+          <tr>
+            <th>Modality</th>
+            <th>Train</th>
+            <th>Validation</th>
+            <th>Test</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>RGB Videos (frontal view)</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+          <tr>
+            <td>RGB Videos (side view)</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+          <tr>
+            <td>SMPL-H Parameters</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+          <tr>
+            <td>Camera Calibration (intrinsics &amp; extrinsics)</td>
+            <td colspan="3"><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+          <tr>
+            <td>English Translations (sentence-level)</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Panoptic Subset -->
+    <div class="download-group">
+      <div class="download-group-title">
+        Refined Panoptic Subset
+        <span class="badge badge-purple">8–10× 1080p · 29.97 FPS</span>
+      </div>
+      <table class="download-table">
+        <thead>
+          <tr>
+            <th>Modality</th>
+            <th>Validation</th>
+            <th>Test</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Multi-view RGB Videos (7+ cameras)</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+          <tr>
+            <td>SMPL-H Parameters</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+          <tr>
+            <td>Camera Calibration (full)</td>
+            <td colspan="2"><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+          <tr>
+            <td>English Translations (video-level)</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Synthetic -->
+    <div class="download-group">
+      <div class="download-group-title">
+        Synthetic Data
+        <span class="badge badge-green">Ground-truth annotations</span>
+      </div>
+      <table class="download-table">
+        <thead>
+          <tr>
+            <th>Split</th>
+            <th>Frames</th>
+            <th>Contents</th>
+            <th>Download</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>How2Sign-Synth3D Train</td>
+            <td>100k</td>
+            <td>RGB renders, camera params, SMPL-H annotations</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+          <tr>
+            <td>How2Sign-Synth3D Test (360°)</td>
+            <td>50k</td>
+            <td>Out-of-domain benchmark, full 360° viewpoints</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+          <tr>
+            <td>How2Sign-Synth3D Test (frontal)</td>
+            <td>—</td>
+            <td>Controlled frontal baseline replicating Panoptic cam</td>
+            <td><span class="placeholder-text">Link coming soon</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- License -->
+    <div class="license-box">
+      <strong>License &amp; Usage:</strong> The dataset is publicly available for <strong>research purposes only</strong>
+      under the <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+      You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+      Commercial use is <strong>not permitted</strong>. The dataset may contain unintended biases; please refer to the
+      published paper for details.
+    </div>
+  </div>
+</section>
+
+<!-- ── Publication ──────────────────────────────────── -->
+<section id="publication">
+  <div class="container">
+    <div class="section-label">Publication</div>
+    <h2 class="section-title">Paper</h2>
+
+    <div class="pub-card">
+      <div class="pub-body">
+        <div class="pub-title">
+          How2Sign-Synth3D: Markerless Holistic Sign Language Performance Capture and Synthetic Data for Dense Landmark Tracking
+        </div>
+        <div class="pub-authors">
+          Levente Tempfli<sup>1</sup>,
+          Stephan Huber<sup>1</sup>,
+          <a href="https://scholar.google.com/citations?user=TODO" target="_blank">Oscar Koller</a><sup>1</sup>,
+          <a href="http://amandaduarte.com.br/" target="_blank">Amanda Duarte</a><sup>2</sup>
+          <br/>
+          <small style="color: var(--text-dim);">
+            <sup>1</sup> Microsoft, Germany &nbsp;·&nbsp;
+            <sup>2</sup> Barcelona Supercomputing Center, Spain
+          </small>
+        </div>
+        <div class="pub-venue">[Venue — placeholder]</div>
+        <div class="pub-links">
+          <a href="#" class="pub-link placeholder" title="Link coming soon">
+            📄 PDF
+          </a>
+          <a href="#" class="pub-link placeholder" title="Link coming soon">
+            🎞 Video
+          </a>
+          <a href="#" class="pub-link placeholder" title="Link coming soon">
+            📌 Poster
+          </a>
+          <a href="#" class="pub-link placeholder" title="Link coming soon">
+            💻 Code
+          </a>
+          <a href="https://arxiv.org/TODO" class="pub-link placeholder" title="Link coming soon">
+            arXiv
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- BibTeX -->
+    <div class="bibtex-wrap">
+      <h3>Citation</h3>
+      <p style="font-size:.88rem; color: var(--text-muted); margin-bottom:1rem;">
+        When using How2Sign-Synth3D, please cite:
+      </p>
+      <div class="bibtex-block" id="bibtex-block"><button class="copy-btn" onclick="copyBibtex()">Copy</button><span class="kw">@inproceedings</span>{<span class="id">Tempfli_How2SignSynth3D</span>,
+  <span class="field">title</span>     = {<span class="val">How2Sign-Synth3D: Markerless Holistic Sign Language Performance Capture
+             and Synthetic Data for Dense Landmark Tracking</span>},
+  <span class="field">author</span>    = {<span class="val">Tempfli, Levente and Huber, Stephan and Koller, Oscar and Duarte, Amanda</span>},
+  <span class="field">booktitle</span> = {<span class="val">[Venue — placeholder]</span>},
+  <span class="field">year</span>      = {<span class="val">2025</span>}
+}</div>
+      <p style="font-size:.84rem; color: var(--text-dim); margin-top:.8rem;">
+        This dataset is an extension of How2Sign. If you use the underlying data, please also cite the original
+        <a href="https://how2sign.github.io/#publication" target="_blank">How2Sign paper (Duarte et al., CVPR 2021)</a>.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Institutions ─────────────────────────────────── -->
+<section class="orgs-section" style="border-top: 1px solid var(--border);">
+  <div class="container">
+    <div class="section-label" style="text-align:center;">Developed by</div>
+    <div class="orgs-grid">
+      <div class="org-name">Microsoft Research</div>
+      <div class="org-name">Barcelona Supercomputing Center</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────── -->
+<footer>
+  <p>
+    © How2Sign-Synth3D &nbsp;·&nbsp;
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a> &nbsp;·&nbsp;
+    For enquiries: <a href="mailto:amanda.duarte@bsc.es">amanda.duarte@bsc.es</a> &nbsp;|&nbsp;
+    <a href="mailto:oskoller@microsoft.com">oskoller@microsoft.com</a>
+  </p>
+  <p style="margin-top:.4rem;">
+    Template inspired by <a href="https://how2sign.github.io" target="_blank">How2Sign</a>
+  </p>
+</footer>
+
+<script>
+  function copyBibtex() {
+    const raw = `@inproceedings{Tempfli_How2SignSynth3D,
+  title     = {How2Sign-Synth3D: Markerless Holistic Sign Language Performance Capture
+             and Synthetic Data for Dense Landmark Tracking},
+  author    = {Tempfli, Levente and Huber, Stephan and Koller, Oscar and Duarte, Amanda},
+  booktitle = {[Venue — placeholder]},
+  year      = {2025}
+}`;
+    navigator.clipboard.writeText(raw).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
