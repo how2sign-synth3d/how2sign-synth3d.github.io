@@ -645,7 +645,8 @@
 <header class="hero">
   <h1>How2Sign-Synth3D</h1>
   <p class="hero-subtitle">
-    Markerless holistic sign language performance capture and synthetic data for dense landmark tracking
+    Markerless holistic sign language performance capture and <br> 
+    synthetic data for dense landmark tracking
   </p>
 
   <div class="tag-strip">
@@ -686,10 +687,11 @@
     </p>
 
     <p class="about-text">
-      Building upon <a href="https://how2sign.github.io" target="_blank">How2Sign</a> — one of the most adopted
-      resources for American Sign Language (ASL) research — How2Sign-Synth3D resolves long-standing limitations such
+      Building upon <a href="https://how2sign.github.io" target="_blank">How2Sign</a>, one of the most adopted
+      resources for American Sign Language (ASL) research, How2Sign-Synth3D resolves long-standing limitations such
       as unsynchronized dual-view recordings, multi-signer interference in panoptic data, and the lack of precise 3D
-      annotations. Leveraging an iterative <strong>fit → render → retrain</strong> loop, models trained on
+      annotations. <br>
+      Leveraging an iterative <strong>fit → render → retrain</strong> loop, models trained on
       How2Sign-Synth3D achieve state-of-the-art accuracy, reducing frontal hand mean landmark error by over
       <strong>60% relative to the baseline</strong>.
     </p>
@@ -697,7 +699,7 @@
     <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-cell">
-        <div class="stat-value">~<span>70</span>h</div>
+        <div class="stat-value"><span>~70h</span></div>
         <div class="stat-label">Green Screen (train+val+test)</div>
       </div>
       <div class="stat-cell">
@@ -717,7 +719,7 @@
         <div class="stat-label">Synthetic Test Frames</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-value">&gt;<span>60%</span></div>
+        <div class="stat-value"><span>&gt;60%</span></div>
         <div class="stat-label">Hand Landmark Error Reduction</div>
       </div>
     </div>
@@ -726,23 +728,23 @@
     <div class="feature-grid">
       <div class="feature-card">
         <div class="feature-icon">🔄</div>
-        <h3>Synchronized Green Screen Set</h3>
-        <p>Dual-view (frontal and side) recordings temporally aligned using kinematic signatures — 89.7% of pairs synchronized with an average offset of ~7.7 frames. Includes fitted SMPL-H parameters, calibrated camera intrinsics/extrinsics, and sentence-level English translations.</p>
+        <h3>Synchronized How2Sign Green Screen Set</h3>
+        <p>Dual-view (frontal and side) recordings temporally aligned using kinematic signatures. We synchronized 89.7% of pairs with an average offset of ~7.7 frames. This data includes fitted SMPL-H parameters, calibrated camera intrinsics/extrinsics, and sentence-level English translations.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🎥</div>
-        <h3>Refined Panoptic Subset</h3>
-        <p>Single-signer sequences from the CMU Panoptic Studio captured from 7+ cameras. Multi-signer interference removed, flickering views filtered, and camera selection optimized for geometric consistency. Includes SMPL-H fits, full camera calibration, and video-level translations.</p>
+        <h3>Refined How2Sign Panoptic Subset</h3>
+        <p>Single-signer sequences captured from 7+ cameras in the CMU Panoptic Studio. We created single-signer videos, filtered out flickering views, and optimized camera selection for geometric consistency. This data includes SMPL-H fits, full camera calibration, and video-level translations.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🤖</div>
         <h3>Synthetic Train Set (100k frames)</h3>
-        <p>High-fidelity renderings generated via Blender's Cycles engine from SMPL-H fits of How2Sign motion. Randomized body shape, clothing, backgrounds, and camera parameters promote generalization. Provides ground-truth 3D landmarks and SOMA pose/shape parameters.</p>
+        <p>High-fidelity renderings generated via Blender's Cycles engine from SMPL-H fits of How2Sign motion. Randomized body shape, clothing, backgrounds, and camera parameters promote generalization. This data provides ground-truth 3D landmarks and SOMA pose/shape parameters.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📊</div>
         <h3>Synthetic Test Benchmark (50k frames)</h3>
-        <p>Out-of-domain evaluation set derived from an independent Chinese Sign Language motion library — ensuring no overlap in motion priors or signer identities. Includes a 360° benchmark and a frontal baseline variant for controlled comparisons.</p>
+        <p>Out-of-domain evaluation set derived from an independent Chinese Sign Language motion library, ensuring no overlap in motion priors or signer identities. This data includes a 360° benchmark and a frontal baseline variant for controlled comparisons.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🦴</div>
@@ -762,7 +764,7 @@
       <div class="pipeline-step">
         <div class="pipeline-num">1</div>
         <h4>Landmark Extraction</h4>
-        <p>Dense 2D landmarks from multi-view corpus</p>
+        <p>Dense 2D landmarks from multi-view videos</p>
       </div>
       <div class="pipeline-step">
         <div class="pipeline-num">2</div>
@@ -794,16 +796,16 @@
   <div class="container">
     <div class="section-label">Download</div>
     <h2 class="section-title">Dataset Access</h2>
-    <p class="section-desc">
+    <!--  <p class="section-desc">
       How2Sign-Synth3D is publicly available for research purposes only under the
-      <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a> license.
-      Download links will be released upon publication.
-    </p>
+      <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a> license.<br> 
+      Download links will be released upon publication. 
+    </p> -->
 
     <div class="download-notice">
       <span class="icon">ℹ️</span>
       <span>
-        Download links are coming soon. This page will be updated when the dataset is officially released.
+        Download links are coming soon. This page will be updated when the dataset is officially released. <br>
         Please check back or <a href="mailto:amanda.duarte@bsc.es">contact us</a> for early access inquiries.
       </span>
     </div>
