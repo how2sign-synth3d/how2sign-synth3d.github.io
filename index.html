@@ -978,13 +978,14 @@
       <p style="font-size:.88rem; color: var(--text-muted); margin-bottom:1rem;">
         When using How2Sign-Synth3D, please cite:
       </p>
-      <div class="bibtex-block" id="bibtex-block"><button class="copy-btn" onclick="copyBibtex()">Copy</button><span class="kw">@inproceedings</span>{<span class="id">Tempfli_How2SignSynth3D</span>,
-  <span class="field">title</span>     = {<span class="val">How2Sign-Synth3D: Markerless Holistic Sign Language Performance Capture
-             and Synthetic Data for Dense Landmark Tracking</span>},
-  <span class="field">author</span>    = {<span class="val">Tempfli, Levente and Huber, Stephan and Koller, Oscar and Duarte, Amanda</span>},
-  <span class="field">booktitle</span> = {<span class="val">In the Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Findings, 2026</span>},
-  <span class="field">year</span>      = {<span class="val">2025</span>}
-}</div>
+      <div class="bibtex-block" id="bibtex-block"><button class="copy-btn" onclick="copyBibtex()">Copy</button><span class="kw">@InProceedings</span>{<span class="id">Tempfli_2026_CVPR</span>,
+      <span class="field">author</span>    = {<span class="val">Tempfli, Levente and Huber, Stephan and Koller, Oscar and Duarte, Amanda</span>},
+      <span class="field">title</span>     = {<span class="val">How2Sign-Synth3D: Markerless Holistic Sign Language Performance Capture and Synthetic Data for Dense Landmark Tracking</span>},
+      <span class="field">booktitle</span> = {<span class="val">Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Findings</span>},
+      <span class="field">month</span>     = {<span class="val">June</span>},
+      <span class="field">year</span>      = {<span class="val">2026</span>},
+      <span class="field">pages</span>     = {<span class="val">3501-3509</span>}
+      }</div>
       <p style="font-size:.84rem; color: var(--text-dim); margin-top:.8rem;">
         This dataset is an extension of How2Sign. If you use the underlying data, please also cite the original
         <a href="https://how2sign.github.io/#publication" target="_blank">How2Sign paper (Duarte et al., CVPR 2021)</a>.
@@ -1015,13 +1016,14 @@
 
 <script>
   function copyBibtex() {
-    const raw = `@inproceedings{Tempfli_How2SignSynth3D,
-  title     = {How2Sign-Synth3D: Markerless Holistic Sign Language Performance Capture
-             and Synthetic Data for Dense Landmark Tracking},
-  author    = {Tempfli, Levente and Huber, Stephan and Koller, Oscar and Duarte, Amanda},
-  booktitle = {In the Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops, 2026},
-  year      = {2026}
-}`;
+    const raw = `@InProceedings{Tempfli_2026_CVPR,
+      author    = {Tempfli, Levente and Huber, Stephan and Koller, Oscar and Duarte, Amanda},
+      title     = {How2Sign-Synth3D: Markerless Holistic Sign Language Performance Capture and Synthetic Data for Dense Landmark Tracking},
+      booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Findings},
+      month     = {June},
+      year      = {2026},
+      pages     = {3501-3509}
+      }`;
     navigator.clipboard.writeText(raw).then(() => {
       const btn = document.querySelector('.copy-btn');
       btn.textContent = 'Copied!';
